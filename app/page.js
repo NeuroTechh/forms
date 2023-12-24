@@ -50,7 +50,9 @@ const FileUploadForm = () => {
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
+      console.log(response)
+
+      if (response) {
         console.log("Form submitted successfully!");
         alert("Form submitted successfully!");
       } else {
