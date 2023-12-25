@@ -199,7 +199,7 @@ const FileUploadForm = () => {
 							htmlFor="description"
 							className="block mb-1 font-semibold text-base "
 						>
-							How can you contribute to the growth of Naitechh?"
+							How can you contribute to the growth of Naitechh?
 						</label>
 						<textarea
 							id="description"
