@@ -35,7 +35,11 @@ const FileUploadForm = () => {
     setLoading(true);
 
     try {
-      if (formData.techDomains.length === 0 && !formData.reel && !formData.posts) {
+      if (
+        formData.techDomains.length === 0 &&
+        !formData.reel &&
+        !formData.posts
+      ) {
         alert("Please select atleast one option");
         setLoading(false);
         return;
@@ -70,6 +74,8 @@ const FileUploadForm = () => {
     "Cyber Security",
     "Web Dev",
     "DSA",
+    "App Dev",
+    "Blockchain",
     "Cloud Computing",
     "Data Science",
   ];
@@ -129,7 +135,9 @@ const FileUploadForm = () => {
   return (
     <div className="min-h-screen max-h-screen w-full flex md:flex-row justify-center items-center lg:bg-[#181818] md:bg-[url('/grainny.png')] bg-no-repeat bg-cover overflow-hidden">
       <div className="rounded-[0.5rem] text-white space-y-6 p-10 pb-16 md:min-w-[50vw] md:max-w-[50vw] h-full min-h-screen flex justify-center items-center md:items-start flex-col w-full grain overflow-y-scroll scrollbar">
-        <h1 className="text-3xl font-black text-center">Naitechh Registrations</h1>
+        <h1 className="text-3xl font-black text-center">
+          Naitechh Registrations
+        </h1>
         <form onSubmit={handleSubmit} className="w-full max-w-md text-sm">
           <div className="mb-4">
             <label htmlFor="name" className="block mb-1 font-semibold">
@@ -180,7 +188,10 @@ const FileUploadForm = () => {
           </div>
           {handleDomainForm()}
           <div className="my-4">
-            <label htmlFor="description" className="block mb-1 font-semibold text-base">
+            <label
+              htmlFor="description"
+              className="block mb-1 font-semibold text-base"
+            >
               How can you contribute to the growth of Naitechh?
             </label>
             <textarea
