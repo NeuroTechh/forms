@@ -60,6 +60,15 @@ const FileUploadForm = () => {
         console.log("Form submitted successfully!");
         alert("Form submitted successfully!");
         setLoading(false);
+        setFormData({
+          name: "",
+          email: "",
+          domain: "",
+          description: "",
+          techDomains: [],
+          reel: false,
+          posts: false,
+        });
       } else {
         throw new Error("Failed to submit form");
       }
