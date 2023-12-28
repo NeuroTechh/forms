@@ -20,7 +20,7 @@
 		background-size: cover;
 		background-position: center;
 		background-attachment: fixed;
-		animation: spin 50s infinite linear;
+		animation: spin 70s infinite linear;
 
 		z-index: -1; /* Ensure the background is behind other content */
 	}
