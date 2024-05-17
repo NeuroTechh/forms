@@ -149,20 +149,6 @@ const FileUploadForm = () => {
 
 	return (
 		<>
-			<Head>
-				<meta
-					property="og:image"
-					content="https://neurotechh.live/seo.png"
-				/>
-				<meta property="og:image:type" content="<generated>" />
-				<meta property="og:image:width" content="<generated>" />
-				<meta property="og:image:height" content="<generated>" />
-
-				<meta name="twitter:image" content="<generated>" />
-				<meta name="twitter:image:type" content="<generated>" />
-				<meta name="twitter:image:width" content="<generated>" />
-				<meta name="twitter:image:height" content="<generated>" />
-			</Head>
 			<div className="min-h-screen max-h-screen w-full flex md:flex-row justify-center items-center lg:bg-[#181818] md:bg-[url('/grainny.png')] bg-no-repeat bg-cover overflow-hidden">
 				<div className="rounded-[0.5rem] text-white space-y-6 p-10 pb-16 md:min-w-[50vw] md:max-w-[50vw] h-full min-h-screen flex justify-center items-center md:items-start flex-col w-full grain overflow-y-scroll scrollbar md:overflow-hidden">
 					<h1 className="text-2xl tracking-wider font-black text-center">
