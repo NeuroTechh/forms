@@ -7,12 +7,18 @@ export const metadata = {
 	title: "NeuroTechh Registrations",
 	description:
 		"We are a community of student developers who build projects and comeup with innovative solutions! Come join us and be the change!",
+	metadataBase: new URL("https://forms.neurotechh.live/"),
+	alternates: {
+		canonical: "/",
+	},
+	creator: "NeuroTechh",
+	publisher: "NeuroTechh",
+	keywords: ["Technology", "Hiring", "Community"],
 };
 
 export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
-		
 			<body className={inter.className}>{children}</body>
 		</html>
 	);
