@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 
 const FileUploadForm = () => {
 	const [loading, setLoading] = useState(false);
@@ -148,7 +149,7 @@ const FileUploadForm = () => {
 
 	return (
 		<div className="min-h-screen max-h-screen w-full flex md:flex-row justify-center items-center lg:bg-[#181818] md:bg-[url('/grainny.png')] bg-no-repeat bg-cover overflow-hidden">
-			<div className="rounded-[0.5rem] text-white space-y-6 p-10 pb-16 md:min-w-[50vw] md:max-w-[50vw] h-full min-h-screen flex justify-center items-center md:items-start flex-col w-full grain overflow-y-scroll scrollbar">
+			<div className="rounded-[0.5rem] text-white space-y-6 p-10 pb-16 md:min-w-[50vw] md:max-w-[50vw] h-full min-h-screen flex justify-center items-center md:items-start flex-col w-full grain overflow-y-scroll scrollbar md:overflow-hidden">
 				<h1 className="text-2xl tracking-wider font-black text-center">
 					Neurotechh Registrations
 				</h1>
@@ -218,7 +219,7 @@ const FileUploadForm = () => {
 							htmlFor="description"
 							className="block mb-1 font-semibold "
 						>
-							How can you contribute to the growth of Naitechh?
+							How can you contribute to the growth of NeuroTechh?
 						</label>
 						<textarea
 							id="description"
@@ -238,11 +239,14 @@ const FileUploadForm = () => {
 					</button>
 				</form>
 			</div>
-			<img
+			<Image
 				src="/bg.png"
+				height={1000}
+				width={1000}
+				priority={true}
 				className="hidden lg:block w-full min-w-[50vw] max-w-[50vw] h-full min-h-screen max-h-screen"
 				alt="Background"
-			></img>
+			></Image>
 		</div>
 	);
 };
