@@ -1,5 +1,3 @@
-import { Metadata } from "next";
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {};
 
