@@ -11,10 +11,17 @@
   "dependencies": {
     "@tailwindcss/forms": "^0.5.7",
     "axios": "^1.6.2",
+    "clsx": "^2.1.1",
+    "firebase": "^10.12.2",
+    "google-libphonenumber": "^3.2.34",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
-    "sharp": "^0.33.4"
+    "react-hook-form": "^7.51.5",
+    "react-international-phone": "^4.3.0",
+    "sharp": "^0.33.4",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animated": "^1.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
