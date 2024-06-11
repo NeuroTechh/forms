@@ -1,7 +1,14 @@
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
+import DotPattern from "./grid";
 import "./globals.css";
-import Head from "next/head";
-const inter = Inter({ subsets: ["latin"] });
+const outfit = Outfit({ subsets: ["latin"] });
+
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+function cn(...inputs) {
+	return twMerge(clsx(inputs));
+}
 
 export const metadata = {
 	title: "NeuroTechh Registrations",
@@ -19,7 +26,20 @@ export const metadata = {
 export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
-			<body className={inter.className}>{children}</body>
+			<body className={`relative ${outfit.className}`}>
+				{children}
+
+				<DotPattern
+					width={20}
+					height={20}
+					cx={1}
+					cy={1}
+					cr={1}
+					className={cn(
+						"[mask-image:linear-gradient(to_bottom_right,black,transparent)]",
+					)}
+				/>
+			</body>
 		</html>
 	);
 }

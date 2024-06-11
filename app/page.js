@@ -1,86 +1,68 @@
 "use client";
-import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { db } from "./lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { useState } from "react";
+import { PhoneNumberUtil } from "google-libphonenumber";
 import Image from "next/image";
-import Head from "next/head";
-const FileUploadForm = () => {
-	const [loading, setLoading] = useState(false);
-	const [formData, setFormData] = useState({
-		name: "",
-		email: "",
-		domain: "",
-		description: "",
-		techDomains: [],
-		reel: false,
-		posts: false,
-	});
+import { Linkedin, Instagram, Twitter, Mail, Github } from "lucide-react";
 
-	const handleInputChange = (event) => {
-		const { name, value } = event.target;
-		setFormData({ ...formData, [name]: value });
-	};
+export default function Home() {
+	const phoneUtil = PhoneNumberUtil.getInstance();
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm();
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [submitted, setSubmitted] = useState(false);
 
-	const handleDomainSelection = (event) => {
-		const { name, checked } = event.target;
-		if (name === "reel" || name === "posts") {
-			setFormData({ ...formData, [name]: checked });
-		} else {
-			let updatedTechDomains = checked
-				? [...formData.techDomains, name]
-				: formData.techDomains.filter((domain) => domain !== name);
-			setFormData({ ...formData, techDomains: updatedTechDomains });
-		}
-	};
-
-	const handleSubmit = async (event) => {
-		event.preventDefault();
-		setLoading(true);
-
-		try {
-			if (
-				formData.techDomains.length === 0 &&
-				!formData.reel &&
-				!formData.posts
-			) {
-				alert("Please select atleast one option");
-				setLoading(false);
-				return;
-			}
-
-			const response = await fetch(
-				process.env.NEXT_PUBLIC_APPSCRIPT_URL,
-				{
-					method: "POST",
-					mode: "no-cors",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(formData),
+	async function onSubmit(data) {
+		setIsSubmitting(true);
+		console.log(data);
+		const { name, email, domains, phone, message } = data;
+		const user = {
+			name,
+			email,
+			domains,
+			phone,
+			message,
+		};
+		const userRef = doc(db, "users", email);
+		console.log(userRef);
+		await setDoc(userRef, user)
+			.then(async () => {
+				console.log("User created successfully");
+				try {
+					console.log(user);
+					const response = await fetch("/api/send", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(user),
+					});
+					if (!response.ok) {
+						throw new Error("Failed to send data to API");
+					}
+					console.log("User data sent to API successfully");
+				} catch (error) {
+					console.error("Error sending user data to API:", error);
 				}
-			);
+				setIsSubmitting(false);
+				setSubmitted(true);
+			})
+			.catch((error) => {
+				console.log("Error creating user:", error);
+				setIsSubmitting(false);
+			});
 
-			console.log(response);
+		console.log(data);
+	}
 
-			if (response) {
-				console.log("Form submitted successfully!");
-				alert("Form submitted successfully!");
-				setLoading(false);
-				setFormData({
-					name: "",
-					email: "",
-					domain: "",
-					description: "",
-					techDomains: [],
-					reel: false,
-					posts: false,
-				});
-			} else {
-				throw new Error("Failed to submit form");
-			}
-		} catch (error) {
-			console.error("Error submitting form:", error);
-			setLoading(false);
-		}
-	};
+	if (!errors) {
+		console.log(errors);
+	}
 
 	const techDomains = [
 		"ML",
@@ -93,168 +75,195 @@ const FileUploadForm = () => {
 		"Data Science",
 	];
 
-	const handleDomainForm = () => {
-		if (formData.domain === "technical") {
-			return (
-				<div>
-					<label className="font-semibold py-2 mb-2">
-						Technical Domains:
-					</label>
-					<div className="pt-2 grid grid-cols-2">
-						{techDomains.map((domain, index) => (
-							<div key={index} className="px-4 py-2 flex gap-3">
-								<input
-									type="checkbox"
-									id={domain}
-									name={domain}
-									value={domain}
-									onChange={handleDomainSelection}
-									className="bg-slate-100 border-purple-300 text-pink-500 focus:ring-0 focus:outline-none rounded shadow"
-								/>
-								<label htmlFor={domain}>{domain}</label>
-							</div>
-						))}
-					</div>
-				</div>
-			);
-		} else if (formData.domain === "creatives") {
-			return (
-				<div>
-					<label>Creative Domains:</label>
-					<div className="px-4 py-2 flex gap-3">
-						<input
-							type="checkbox"
-							id="reel"
-							name="reel"
-							onChange={handleDomainSelection}
-							className="bg-slate-100 border-purple-300 text-red-500 focus:ring-0 focus:outline-none rounded shadow"
-						/>
-						<label htmlFor="reel">Reel</label>
-					</div>
-					<div className="px-4 py-2 flex gap-3">
-						<input
-							type="checkbox"
-							id="posts"
-							name="posts"
-							onChange={handleDomainSelection}
-							className="bg-slate-100 border-purple-300 text-red-500 focus:ring-0 focus:outline-none rounded shadow"
-						/>
-						<label htmlFor="posts">Posts</label>
-					</div>
-				</div>
-			);
-		}
-		return null;
-	};
-
 	return (
 		<>
-			<div className="min-h-screen max-h-screen w-full flex md:flex-row justify-center items-center lg:bg-[#181818] md:bg-[url('/grainny.png')] bg-no-repeat bg-cover overflow-hidden">
-				<div className="rounded-[0.5rem] text-white space-y-6 p-10 pb-16 md:min-w-[50vw] md:max-w-[50vw] h-full min-h-screen flex justify-center items-center md:items-start flex-col w-full grain overflow-y-scroll scrollbar md:overflow-hidden">
-					<h1 className="text-2xl tracking-wider font-black text-center">
-						Neurotechh Registrations
+			<div className="min-h-screen w-fit md:w-full flex flex-col md:flex-row justify-center md:justify-around items-center bg-zinc-950 md:bg-[url('/grainny.png')] bg-no-repeat bg-cover overflow-hidden text-white px-10 py-10 md:py-0">
+				<div className=" max-w-prose space-y-5 mb-8">
+					<Image
+						src={"/logo.png"}
+						width={70}
+						height={70}
+						alt="NeuroTechh Logo"
+						priority={true}
+						className="animate-fade-right animate-duration-700"
+					/>
+					<h1 className="scroll-m-20 text-4xl font-normal md:font-light tracking-tight lg:text-6xl animate-fade-right animate-duration-700">
+						We are{" "}
+						<span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-pink-600">
+							Team NeuroTechh
+						</span>{" "}
+						and we would love to hear from you!
 					</h1>
-					<form
-						onSubmit={handleSubmit}
-						className="w-full max-w-md text-sm"
-					>
-						<div className="mb-4">
-							<label
-								htmlFor="name"
-								className="block mb-1 font-semibold"
-							>
-								Name:
-							</label>
-							<input
-								type="text"
-								id="name"
-								name="name"
-								value={formData.name}
-								onChange={handleInputChange}
-								className="border-b border-gray-500 rounded px-2 py-2 w-full bg-white bg-opacity-5 backdrop-filter backdrop-blur-lg"
-								required
-							/>
-						</div>
-						<div className="mb-4">
-							<label
-								htmlFor="email"
-								className="block mb-1 font-semibold"
-							>
-								Email:
-							</label>
-							<input
-								type="email"
-								id="email"
-								name="email"
-								value={formData.email}
-								onChange={handleInputChange}
-								className="border-b border-gray-500 rounded px-2 py-2 w-full bg-white bg-opacity-5 backdrop-filter backdrop-blur-lg"
-								required
-							/>
-						</div>
-						<div className="mb-4">
-							<label
-								htmlFor="domain"
-								className="block mb-1 font-semibold"
-							>
-								Select Domain:
-							</label>
-							<select
-								id="domain"
-								name="domain"
-								value={formData.domain}
-								onChange={handleInputChange}
-								className="border-b font-semibold border-gray-500 rounded px-2 py-2 w-full bg-white bg-opacity-5 backdrop-filter backdrop-blur-lg md:bg-[#222] text-sm"
-								required
-							>
-								<option value="">Choose Domain</option>
-								<option value="technical"> Technical</option>
-								<option
-									value="creatives"
-									className="rounded-full"
-								>
-									Creatives
-								</option>
-							</select>
-						</div>
-						{handleDomainForm()}
-						<div className="my-4">
-							<label
-								htmlFor="description"
-								className="block mb-1 font-semibold "
-							>
-								How can you contribute to the growth of
-								NeuroTechh?
-							</label>
-							<textarea
-								id="description"
-								name="description"
-								value={formData.description}
-								onChange={handleInputChange}
-								className="border-b border-gray-500 rounded px-2 py-5 w-full bg-white bg-opacity-5 backdrop-filter backdrop-blur-lg text-base"
-								required
-							/>
-						</div>
-						<button
-							type="submit"
-							className="bg-blue-500 text-white px-4 py-2 rounded"
-							disabled={loading}
-						>
-							{loading ? "Submitting..." : "Submit"}
-						</button>
-					</form>
+					<p className="hidden md:block font-thin tracking-tight lg:text-2xl animate-fade-up animate-delay-200 animate-duration-700">
+						We are a team of enthusiastic students and developers
+						who make technical projects way beyond what colleges
+						will teach.
+					</p>
+					<span className=" gap-4 hidden md:flex font-thin tracking-tight lg:text-2xl animate-fade-up animate-delay-300 animate-duration-700">
+						<a href="https://github.com/neurotechh" className="hover:text-brandpink transition-all">
+							<Github />
+						</a>
+					
+						<a href="https://www.linkedin.com/company/neurotechh" className="hover:text-brandpink transition-all">
+							<Linkedin />
+						</a>
+						<a href="https://www.instagram.com/neurotechh/" className="hover:text-brandpink transition-all">
+							<Instagram />
+						</a>
+						<a href="mailto:hello@neurotechh.live" className="hover:text-brandpink transition-all">
+							<Mail />
+						</a>
+					</span>
 				</div>
-				<Image
-					src="/bg.png"
-					height={1000}
-					width={1000}
-					priority={true}
-					className="hidden lg:block w-full min-w-[50vw] max-w-[50vw] h-full min-h-screen max-h-screen"
-					alt="Background"
-				></Image>
+				<div className="w-full md:w-1/3 animate-fade animate-delay-200 md:animate-delay-500 animate-duration-700">
+					{submitted ? (
+						<div className="text-left">
+							<h1 className="text-xl max-w-[30ch] font-light tracking-tight animate-fade-right animate-duration-700 underline underline-offset-4">
+								Thank you for applying to NeuroTechh ✨ Check
+								your inbox for a confirmation email!
+							</h1>
+						</div>
+					) : (
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<div className="mb-4">
+								<label className="block mb-1 font-semibold">
+									Name:
+								</label>
+								<input
+									{...register("name", {
+										required: "Name is required",
+									})}
+									className="border-b border-gray-500 rounded px-2 py-2 w-full bg-white bg-opacity-5 backdrop-filter backdrop-blur-2xl focus:border-pink-500 focus:ring-0"
+								/>
+								{errors.name && (
+									<p className="text-red-400">
+										{errors.name.message}
+									</p>
+								)}
+							</div>
+
+							<div className="mb-4">
+								<label className="block mb-1 font-semibold">
+									Email:
+								</label>
+								<input
+									type="email"
+									{...register("email", {
+										required: "Email is required",
+										pattern: {
+											value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+											message:
+												"Enter a valid email address",
+										},
+									})}
+									className="border-b border-gray-500 rounded px-2 py-2 w-full bg-white bg-opacity-5 backdrop-filter backdrop-blur-2xl focus:border-pink-500 focus:ring-0"
+								/>
+								{errors.email && (
+									<p className="text-red-400">
+										{errors.email.message}
+									</p>
+								)}
+							</div>
+
+							<div className="mb-4">
+								<label className="block mb-1 font-semibold">
+									Preferred Domain:
+								</label>
+								<div className="pt-2 grid grid-cols-2 gap-2">
+									{techDomains.map((domain, index) => (
+										<div
+											className="flex items-center"
+											key={index}
+										>
+											<input
+												type="checkbox"
+												value={domain}
+												{...register("domains", {
+													required:
+														"At least one domain is required",
+												})}
+												className="bg-slate-100 border-0 ring-0 text-brandpink focus:ring-0 focus:outline-none rounded shadow"
+											/>
+											<label className="ml-2 text-sm font-medium text-white/80">
+												{domain}
+											</label>
+										</div>
+									))}
+								</div>
+								{errors.domains && (
+									<p className="text-red-400">
+										{errors.domains.message}
+									</p>
+								)}
+							</div>
+
+							<div className="mb-4">
+								<labe className="block mb-1 font-semibold">
+									Phone Number:
+								</labe>
+								<input
+									type="tel"
+									{...register("phone", {
+										required: "Phone number is required",
+										pattern: {
+											value: /^[0-9]{10}$/,
+											message:
+												"Enter a valid 10-digit phone number",
+										},
+									})}
+									className="border-b border-gray-500 rounded px-2 py-2 w-full bg-white bg-opacity-5 backdrop-filter backdrop-blur-2xl focus:border-pink-500 focus:ring-0"
+								/>
+								{errors.phone && <p>{errors.phone.message}</p>}
+							</div>
+							<div className="mb-4">
+								<label className="block mb-1 font-semibold">
+									How can you contribute to the growth of
+									NeuroTechh?
+								</label>
+								<textarea
+									{...register("message", {
+										required: "Message is required",
+									})}
+									className="border-b border-gray-500 rounded px-2 py-2 w-full bg-white bg-opacity-5 backdrop-filter backdrop-blur-2xl focus:border-pink-500 focus:ring-0"
+								/>
+								{errors.message && (
+									<p className="text-red-400">
+										{errors.message.message}
+									</p>
+								)}
+							</div>
+							{isSubmitting ? (
+								<button
+									className="bg-brandpink/50 text-white px-4 md:px-6 py-2 md:py-4 rounded"
+									disabled
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth="2"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										className="animate-spin -ml-1 mr-3 h-5 w-5 text-white lucide lucide-loader-circle"
+									>
+										<path d="M21 12a9 9 0 1 1-6.219-8.56" />
+									</svg>
+								</button>
+							) : (
+								<button
+									type="submit"
+									className="bg-brandpink text-white px-4 md:px-6 py-2 md:py-4 rounded hover:opacity-80 transition-all font-bold"
+								>
+									Submit
+								</button>
+							)}
+						</form>
+					)}
+				</div>
 			</div>
 		</>
 	);
-};
-
-export default FileUploadForm;
+}

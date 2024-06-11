@@ -5,6 +5,19 @@ module.exports = {
 		"./components/**/*.{js,ts,jsx,tsx,mdx}",
 		"./app/**/*.{js,ts,jsx,tsx,mdx}",
 	],
-	theme: {},
-	plugins: [require("@tailwindcss/forms")],
+	theme: {
+		extend: {
+			colors: {
+				background: "#111",
+				brandpink: "#fe0167",
+				white: "#ffeadb",
+			},
+			fontFamily: {
+				incognito: ["var(--incognito)"],
+				outfit: ["Outfit", "sans-serif"],
+			},
+		},
+	},
+
+	plugins: [require("@tailwindcss/forms"), require("tailwindcss-animated")],
 };
